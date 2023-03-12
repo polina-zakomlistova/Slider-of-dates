@@ -5,12 +5,13 @@ import SliderOfDates from './components/SliderOfDates';
 
 function App() {
     const [currentDates, setCurrentDates] = useState([
-        new Date(2014, 6),
-        new Date(2015, 8),
+        new Date(2014, 5),
+        new Date(2014, 8),
     ]);
+    console.log(currentDates);
     const [minMax, setMinMax] = useState([
-        new Date(2014, 1),
-        new Date(2017, 1),
+        new Date(2014, 3),
+        new Date(2017, 11),
     ]);
 
     return (

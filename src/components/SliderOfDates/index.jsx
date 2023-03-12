@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
 import Tooltip from '../Tooltips';
 import Button from '@material-ui/core/Button';
@@ -9,24 +8,35 @@ RangeSlider.propTypes = propTypes;
 
 const useStyles = makeStyles({
     root: {
-        width: '80%',
-        margin: '50px',
+        margin: '50px 0',
+        padding: '10px',
+        display: 'flex',
+    },
+    buttons: {
+        display: 'flex',
+        flexDirection: 'column',
+        margin: '0 120px 0 0',
+    },
+    slider: {
+        margin: '50px 0',
+        flexGrow: 1,
+    },
+
+    button: {
+        color: '#0167B3',
+        fontFamily: 'Raleway',
+        fontStyle: 'normal',
+        fontWeight: 600,
+        fontSize: '14px',
+        lineHeight: '18px',
+        textTransform: 'none',
     },
 });
-
-const TooltipLight = withStyles((theme) => ({
-    tooltip: {
-        backgroundColor: theme.palette.common.white,
-        color: 'rgba(0, 0, 0, 0.87)',
-        boxShadow: theme.shadows[1],
-        fontSize: 20,
-    },
-}))(Tooltip);
 
 const PrettoSlider = withStyles({
     root: {
         color: '#52af77',
-        height: 8,
+        width: '90%',
     },
     thumb: {
         height: 20,
@@ -41,7 +51,7 @@ const PrettoSlider = withStyles({
     },
     active: {},
     valueLabel: {
-        left: 'calc(-50% + 4px)',
+        left: 'calc(-50% + 0px)',
     },
     track: {
         height: 6,
@@ -50,9 +60,21 @@ const PrettoSlider = withStyles({
     },
     rail: {
         height: 6,
-
         color: '#EDF1F8',
         borderRadius: 4,
+    },
+    mark: {
+        backgroundColor: 'transparent',
+    },
+
+    markLabel: {
+        color: '#999999',
+        textTransform: 'lowercase',
+        fontFamily: 'Raleway',
+        fontStyle: 'normal',
+        fontWeight: 600,
+        fontSize: '14px',
+        lineHeight: '18px',
     },
 })(Slider);
 
@@ -68,12 +90,8 @@ export default function RangeSlider(props) {
     const maxYear = max.getFullYear();
     const minMonth = min.getMonth();
     const maxMonth = max.getMonth();
-    const minMaxMonth = getMonthFromMS(max - min);
-    console.log(minMonth, maxMonth);
-
-    function getMonthFromMS(ms) {
-        return Math.floor(ms / (30 * 24 * 60 * 60 * 1000));
-    }
+    const countMarkes = (maxYear - minYear) * 12 - minMonth + (maxMonth + 1); //число маркеров между минимаьной и максимальной датой
+    const numMaxMonth = countMarkes + minMonth - 1;
 
     function getNumberFromDate(date) {
         let dateMonth = date.getMonth();
@@ -111,47 +129,45 @@ export default function RangeSlider(props) {
         const month = getMonth(value);
         const monthStr = months[month];
 
-        return `${monthStr} ${year}`;
+        return `${monthStr}
+        
+        ${year}`;
     }
 
     const months = [
-        'январь',
-        'февраль',
-        'март',
-        'апрель',
-        'май',
-        'июнь',
-        'июль',
-        'август',
-        'сентябрь',
-        'октябрь',
-        'ноябрь',
-        'декабрь',
+        'Январь',
+        'Февраль',
+        'Март',
+        'Апрель',
+        'Май',
+        'Июнь',
+        'Июль',
+        'Август',
+        'Сентябрь',
+        'Октябрь',
+        'Ноябрь',
+        'Декабрь',
     ];
-
-    const [value, setValue] = useState([
-        getNumberFromDate(currentMin),
-        getNumberFromDate(currentMax),
-    ]);
-
-    const [marks, setMarks] = useState(getMarksMonth());
-
-    const [typeSlider, setTypeSlider] = useState(TYPE_MONTH);
-    //let marks = getMarks();
+    function getMarks() {
+        if (typeSlider === TYPE_MONTH) {
+            return getMarksMonth();
+        } else {
+            return getMarksYear();
+        }
+    }
 
     function getMarksMonth() {
         let newMarksArr = [];
-        for (let date = minMonth; date <= minMaxMonth; date++) {
+        for (let date = minMonth; date < numMaxMonth; date++) {
             let monthNum = getMonth(date);
-            if (date === minMonth || getMonth(date) === 0) {
-                //date === minMonth || getMonth(date) === 0
+            if (date === minMonth || monthNum === 0) {
                 const year = getYear(date);
                 newMarksArr.push({
                     value: date,
                     label: year.toString(),
                 });
             } else {
-                const month = getMonth(date);
+                const month = monthNum;
                 const monthStr = getShortStrMonth(months[month]);
                 newMarksArr.push({
                     value: date,
@@ -165,10 +181,9 @@ export default function RangeSlider(props) {
 
     function getMarksYear() {
         let newMarksArr = [];
-        for (let date = minMonth; date <= minMaxMonth; date++) {
+        for (let date = minMonth; date < numMaxMonth; date++) {
             let monthNum = getMonth(date);
-            if (date === minMonth || getMonth(date) === 0) {
-                //date === minMonth || getMonth(date) === 0
+            if (date === minMonth || monthNum === 0) {
                 const year = getYear(date);
                 newMarksArr.push({
                     value: date,
@@ -179,48 +194,60 @@ export default function RangeSlider(props) {
         return newMarksArr;
     }
 
+    const [value, setValue] = useState([
+        getNumberFromDate(currentMin),
+        getNumberFromDate(currentMax),
+    ]);
+
+    const [marks, setMarks] = useState(getMarksMonth());
+
+    const [typeSlider, setTypeSlider] = useState(TYPE_MONTH);
+
     //useEffect(getMarks, [min, max]);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
         const valueDate = [
-            getDateFromNumber(value[0]),
-            getDateFromNumber(value[1]),
+            getDateFromNumber(newValue[0]),
+            getDateFromNumber(newValue[1]),
         ];
         onChange(valueDate);
     };
 
-    const handleClickYear = () => {
-        setTypeSlider(TYPE_YEAR);
-        setMarks(getMarksYear());
-    };
-    const handleClickMonth = () => {
-        setTypeSlider(TYPE_MONTH);
-        setMarks(getMarksMonth());
-    };
+    useEffect(() => setMarks(getMarks()), [typeSlider]);
 
     return (
         <>
-            <Button onClick={handleClickYear}>Все года</Button>
-            <Button onClick={handleClickMonth}>Месяца</Button>
-
             <div className={classes.root}>
-                <Typography id="range-slider" gutterBottom>
-                    Date range
-                </Typography>
-                <PrettoSlider
-                    value={value}
-                    onChange={handleChange}
-                    valueLabelDisplay="on"
-                    ValueLabelComponent={TooltipLight}
-                    aria-labelledby="custom thumb label"
-                    getAriaValueText={valuetext}
-                    valueLabelFormat={valuetext}
-                    min={minMonth}
-                    step={1}
-                    max={minMaxMonth}
-                    marks={marks}
-                />
+                <div className={classes.buttons}>
+                    <Button
+                        className={classes.button}
+                        onClick={() => setTypeSlider(TYPE_YEAR)}
+                    >
+                        Все года
+                    </Button>
+                    <Button
+                        className={classes.button}
+                        onClick={() => setTypeSlider(TYPE_MONTH)}
+                    >
+                        Месяца
+                    </Button>
+                </div>
+
+                <div className={classes.slider}>
+                    <PrettoSlider
+                        value={value}
+                        onChange={handleChange}
+                        valueLabelDisplay="on"
+                        ValueLabelComponent={Tooltip}
+                        aria-labelledby="custom thumb label"
+                        valueLabelFormat={valuetext}
+                        min={minMonth}
+                        step={1}
+                        max={numMaxMonth}
+                        marks={marks}
+                    />
+                </div>
             </div>
         </>
     );
