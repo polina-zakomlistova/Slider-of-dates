@@ -22,6 +22,19 @@ export default function ValueLabelComponent(props) {
             lineHeight: '24px',
             boxShadow: '0px 5px 15px rgba(14, 88, 143, 0.2)',
             borderRadius: '10px',
+            '@media(max-width: 769px)': {
+                fontSize: '12px',
+                lineHeight: '16px',
+                minHeight: '40px',
+                maxWidth: '40px',
+                padding: '3px 8px',
+            },
+            '@media(max-width: 376px)': {
+                fontSize: '10px',
+                lineHeight: '14px',
+                minHeight: '30px',
+                maxWidth: '30px',
+            },
         },
         arrow: {
             color: '#ffffff',

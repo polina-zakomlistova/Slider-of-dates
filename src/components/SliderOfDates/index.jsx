@@ -11,15 +11,26 @@ const useStyles = makeStyles({
         margin: '50px 0',
         padding: '10px',
         display: 'flex',
+        alignItems: 'center',
+        '@media(max-width: 769px)': {
+            flexDirection: 'column',
+        },
     },
     buttons: {
         display: 'flex',
         flexDirection: 'column',
         margin: '0 120px 0 0',
+
+        '@media(max-width: 1439px)': {
+            display: 'none',
+        },
     },
     slider: {
         margin: '50px 0',
         flexGrow: 1,
+        '@media(max-width: 769px)': {
+            width: '90%',
+        },
     },
 
     button: {
@@ -30,7 +41,27 @@ const useStyles = makeStyles({
         fontSize: '14px',
         lineHeight: '18px',
         textTransform: 'none',
+        '@media(max-width: 769px)': {
+            fontSize: '12px',
+            lineHeight: '16px',
+        },
+        '@media(max-width: 376px)': {
+            fontSize: '10px',
+            lineHeight: '14px',
+        },
     },
+
+    yearMark: {
+        color: '#333333',
+    },
+
+    monthMark: {
+        '@media(max-width: 1439px)': {
+            display: 'none',
+        },
+    },
+
+    displayNone: { display: 'none' },
 });
 
 const PrettoSlider = withStyles({
@@ -75,11 +106,33 @@ const PrettoSlider = withStyles({
         fontWeight: 600,
         fontSize: '14px',
         lineHeight: '18px',
+        '@media(max-width: 769px)': {
+            fontSize: '12px',
+            lineHeight: '16px',
+        },
+        '@media(max-width: 376px)': {
+            fontSize: '10px',
+            lineHeight: '14px',
+        },
     },
 })(Slider);
 
 export default function RangeSlider(props) {
     const { min, max, currentMin, currentMax, onChange } = props;
+    checkProps();
+
+    function checkProps() {
+        if (
+            currentMin < min ||
+            currentMin > max ||
+            currentMax < min ||
+            currentMax > max
+        ) {
+            throw new Error(
+                'Некорректные входные данные. Выбранные даты находятся вне минимальной и максимальной'
+            );
+        }
+    }
 
     const TYPE_MONTH = 'month';
     const TYPE_YEAR = 'year';
@@ -92,6 +145,7 @@ export default function RangeSlider(props) {
     const maxMonth = max.getMonth();
     const countMarkes = (maxYear - minYear) * 12 - minMonth + (maxMonth + 1); //число маркеров между минимаьной и максимальной датой
     const numMaxMonth = countMarkes + minMonth - 1;
+    const [typeSlider, setTypeSlider] = useState(TYPE_MONTH);
 
     function getNumberFromDate(date) {
         let dateMonth = date.getMonth();
@@ -129,9 +183,7 @@ export default function RangeSlider(props) {
         const month = getMonth(value);
         const monthStr = months[month];
 
-        return `${monthStr}
-        
-        ${year}`;
+        return `${monthStr} ${year}`;
     }
 
     const months = [
@@ -148,30 +200,34 @@ export default function RangeSlider(props) {
         'Ноябрь',
         'Декабрь',
     ];
-    function getMarks() {
-        if (typeSlider === TYPE_MONTH) {
-            return getMarksMonth();
-        } else {
-            return getMarksYear();
-        }
-    }
 
-    function getMarksMonth() {
+    let classesMonthLable = `${classes.monthMark} ${
+        typeSlider === TYPE_YEAR ? classes.displayNone : ''
+    }`;
+
+    const getMarkLabel = (isMonth, value) => {
+        if (isMonth) {
+            return <span className={classesMonthLable}>{value}</span>;
+        } else {
+            return <span className={classes.yearMark}>{value}</span>;
+        }
+    };
+    function getMarks() {
         let newMarksArr = [];
-        for (let date = minMonth; date < numMaxMonth; date++) {
+        for (let date = minMonth; date <= numMaxMonth; date++) {
             let monthNum = getMonth(date);
             if (date === minMonth || monthNum === 0) {
                 const year = getYear(date);
                 newMarksArr.push({
                     value: date,
-                    label: year.toString(),
+                    label: getMarkLabel(false, year.toString()),
                 });
             } else {
                 const month = monthNum;
                 const monthStr = getShortStrMonth(months[month]);
                 newMarksArr.push({
                     value: date,
-                    label: monthStr,
+                    label: getMarkLabel(true, monthStr),
                 });
             }
         }
@@ -179,31 +235,13 @@ export default function RangeSlider(props) {
         return newMarksArr;
     }
 
-    function getMarksYear() {
-        let newMarksArr = [];
-        for (let date = minMonth; date < numMaxMonth; date++) {
-            let monthNum = getMonth(date);
-            if (date === minMonth || monthNum === 0) {
-                const year = getYear(date);
-                newMarksArr.push({
-                    value: date,
-                    label: year.toString(),
-                });
-            }
-        }
-        return newMarksArr;
-    }
+    const [marks, setMarks] = useState(getMarks());
+    const [onlyYears, setOnlyYears] = useState(false);
 
     const [value, setValue] = useState([
         getNumberFromDate(currentMin),
         getNumberFromDate(currentMax),
     ]);
-
-    const [marks, setMarks] = useState(getMarksMonth());
-
-    const [typeSlider, setTypeSlider] = useState(TYPE_MONTH);
-
-    //useEffect(getMarks, [min, max]);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -214,12 +252,22 @@ export default function RangeSlider(props) {
         onChange(valueDate);
     };
 
+    useEffect(() => {
+        if (maxYear - minYear > 2) {
+            setTypeSlider(TYPE_YEAR);
+            setOnlyYears(true);
+        }
+    }, [minYear, maxYear]);
     useEffect(() => setMarks(getMarks()), [typeSlider]);
+
+    let classesButtons = `${classes.buttons} ${
+        onlyYears ? classes.displayNone : ''
+    }`;
 
     return (
         <>
             <div className={classes.root}>
-                <div className={classes.buttons}>
+                <div className={classesButtons}>
                     <Button
                         className={classes.button}
                         onClick={() => setTypeSlider(TYPE_YEAR)}

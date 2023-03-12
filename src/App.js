@@ -10,8 +10,8 @@ function App() {
     ]);
     console.log(currentDates);
     const [minMax, setMinMax] = useState([
-        new Date(2014, 3),
-        new Date(2017, 11),
+        new Date(2014, 0),
+        new Date(2016, 11),
     ]);
 
     return (
