@@ -1,6 +1,7 @@
 {
-    "name": "99-template",
+    "name": "slider-of-dates",
     "version": "0.1.0",
+    "homepage": "https://polina-zakomlistova.github.io/Slider-of-dates/",
     "private": true,
     "dependencies": {
         "@material-ui/core": "^4.12.4",
