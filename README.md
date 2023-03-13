@@ -1,38 +1,68 @@
-# React Project for the React-Course
+# Привет, я Полина Закомлистова!
 
-## Available Scripts
+### Я начинающий frontend-разработчик.
 
-In the project directory, you can run:
+## Slider of dates
 
-### `npm start`
+Slider of dates - это компонент React, позволяющий выбирать диапазон дат с помощью слайдера. Компонент иммет два отображения: с маркирами годов и с маркерами месяцев.Отображение изменяется при нажатии на соответствующие кнопки, в случае если отображение с помощью дат невозможно (большо диапазон лет или маленькое устройство), данные кнопки скрываются.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Демонстрационный вариант вариант
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+По [ссылке](https://polina-zakomlistova.github.io/Slider-of-dates/) доступен пример использования, для удобства добавлены два компоненты календарей, используемых для выбора диапазона дат.
 
-### `npm test`
+### Установка
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. Скачайте или клонируйте репозиторий.
+2. Установите зависимости с помощью команды "npm install"
 
-### `npm run build`
+### Запуск приложения
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Запустите приложение с помощью команды "npm start.
+2. Откройте приложение в браузере по адресу [http://localhost:3000](http://localhost:3000).
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Использование
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Чтобы выбрать диапазон дат с помощью слайдера, переместите ползунки слайдера на нужные даты. После этого начальная и конечная даты будут отображаться над слайдером.
 
-### `npm run eject`
+### Пример использования
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```
+import React from 'react';
+import SliderOfDates from './components/SliderOfDates';
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+function App() {
+return (
+<div>
+    <SliderOfDates
+        min={new Date(2014, 0, 1)}
+        max={new Date(2016, 11, 31)}
+        currentMin={new Date(2014, 6, 15)}
+        currentMax={new Date(2015, 7, 25)}
+        typeSlider='month'
+        onChange={(dates) => console.log(dates)}
+    />
+</div>
+);
+}
+export default App;
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+| Props      |   Type   |                 Description                  |
+| ---------- | :------: | :------------------------------------------: |
+| min        |   Date   |    Минимальная дата, доступная для выбора    |
+| max        |   Date   |    Минимальная дата, доступная для выбора    |
+| currentMin |   Date   |                Начальная дата                |
+| currentMax |   Date   |                Конечная дата                 |
+| typeSlider |  string  | Определяет, какую часть даты можно изменить  |
+| onChange   | function | Callback, вызываемый при изменении диапазона |
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Зависимости
+
+Slider of dates использует следующие библиотеки
+
+1. react: библиотека для разработки пользовательских интерфейсов.
+2. react-dom: пакет, который содержит инструменты для взаимодействия React с DOM,
+3. material-ui: библиотека компонентов пользовательского интерфейса для React;
+4. primereact: библиотека компонентов пользовательского интерфейса на основе PrimeNG для React;
+
+Все зависимости указаны в файле package.json.
