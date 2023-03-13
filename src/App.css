@@ -3,3 +3,19 @@
     background: #e5e5e5;
     height: 500px;
 }
+.datesContainer {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    z-index: 10;
+}
+.label {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 18px;
+}
+.slider {
+    z-index: 1;
+}

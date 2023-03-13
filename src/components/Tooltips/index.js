@@ -16,7 +16,7 @@ export default function ValueLabelComponent(props) {
             alignItems: 'center',
             padding: '6px 14px',
             minHeight: '66px',
-            maxWidth: '66px',
+            maxWidth: '86px',
             textAlign: 'center',
             fontSize: '18px',
             lineHeight: '24px',

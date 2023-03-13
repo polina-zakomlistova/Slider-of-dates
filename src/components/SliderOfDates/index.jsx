@@ -118,8 +118,16 @@ const PrettoSlider = withStyles({
 })(Slider);
 
 export default function RangeSlider(props) {
-    const { min, max, currentMin, currentMax, onChange } = props;
-    checkProps();
+    const {
+        min,
+        max,
+        currentMin,
+        currentMax,
+        onChange,
+        typeSlider,
+        onChangeType,
+    } = props;
+    //checkProps();
 
     function checkProps() {
         if (
@@ -145,7 +153,6 @@ export default function RangeSlider(props) {
     const maxMonth = max.getMonth();
     const countMarkes = (maxYear - minYear) * 12 - minMonth + (maxMonth + 1); //число маркеров между минимаьной и максимальной датой
     const numMaxMonth = countMarkes + minMonth - 1;
-    const [typeSlider, setTypeSlider] = useState(TYPE_MONTH);
 
     function getNumberFromDate(date) {
         let dateMonth = date.getMonth();
@@ -237,6 +244,12 @@ export default function RangeSlider(props) {
 
     const [marks, setMarks] = useState(getMarks());
     const [onlyYears, setOnlyYears] = useState(false);
+    useEffect(() => {
+        if (maxYear - minYear > 2) {
+            onChangeType(TYPE_YEAR);
+            setOnlyYears(true);
+        }
+    }, [minYear, maxYear]);
 
     const [value, setValue] = useState([
         getNumberFromDate(currentMin),
@@ -252,12 +265,6 @@ export default function RangeSlider(props) {
         onChange(valueDate);
     };
 
-    useEffect(() => {
-        if (maxYear - minYear > 2) {
-            setTypeSlider(TYPE_YEAR);
-            setOnlyYears(true);
-        }
-    }, [minYear, maxYear]);
     useEffect(() => setMarks(getMarks()), [typeSlider]);
 
     let classesButtons = `${classes.buttons} ${
@@ -270,18 +277,17 @@ export default function RangeSlider(props) {
                 <div className={classesButtons}>
                     <Button
                         className={classes.button}
-                        onClick={() => setTypeSlider(TYPE_YEAR)}
+                        onClick={() => onChangeType(TYPE_YEAR)}
                     >
                         Все года
                     </Button>
                     <Button
                         className={classes.button}
-                        onClick={() => setTypeSlider(TYPE_MONTH)}
+                        onClick={() => onChangeType(TYPE_MONTH)}
                     >
                         Месяца
                     </Button>
                 </div>
-
                 <div className={classes.slider}>
                     <PrettoSlider
                         value={value}
