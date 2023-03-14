@@ -1,9 +1,11 @@
 import Tooltip from '@material-ui/core/Tooltip';
+import PropTypes from './props';
 import { withStyles } from '@material-ui/core/styles';
+
+ValueLabelComponent.propTypes = PropTypes;
 
 export default function ValueLabelComponent(props) {
     const { children, open, value, index } = props;
-
     const TooltipLight = withStyles(() => ({
         tooltip: {
             fontFamily: 'Raleway',
@@ -26,18 +28,21 @@ export default function ValueLabelComponent(props) {
                 fontSize: '12px',
                 lineHeight: '16px',
                 minHeight: '40px',
-                maxWidth: '40px',
+                maxWidth: '50px',
                 padding: '3px 8px',
             },
             '@media(max-width: 376px)': {
                 fontSize: '10px',
                 lineHeight: '14px',
-                minHeight: '30px',
-                maxWidth: '30px',
+                minHeight: '40px',
+                maxWidth: '50px',
             },
         },
         arrow: {
             color: '#ffffff',
+        },
+        popper: {
+            zIndex: 1000,
         },
     }))(Tooltip);
     return (
@@ -45,7 +50,7 @@ export default function ValueLabelComponent(props) {
             open={open}
             placement={index === 0 ? 'top' : 'bottom'}
             title={value}
-            enterDelay={1000}
+            TransitionProps={{ timeout: 0 }}
             arrow
         >
             {children}

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Slider from '@material-ui/core/Slider';
 import Tooltip from '../Tooltips';
 import Button from '@material-ui/core/Button';
 import propTypes from './props';
+
 RangeSlider.propTypes = propTypes;
 
 const useStyles = makeStyles({
@@ -121,36 +122,31 @@ export default function RangeSlider(props) {
     const {
         min,
         max,
-        currentMin,
-        currentMax,
+        currentMin = min,
+        currentMax = max,
         onChange,
         typeSlider,
         onChangeType,
     } = props;
-    //checkProps();
 
-    function checkProps() {
-        if (
-            currentMin < min ||
-            currentMin > max ||
-            currentMax < min ||
-            currentMax > max
-        ) {
-            throw new Error(
-                'Некорректные входные данные. Выбранные даты находятся вне минимальной и максимальной'
-            );
-        }
-    }
-
+    const classes = useStyles();
     const TYPE_MONTH = 'month';
     const TYPE_YEAR = 'year';
 
-    const classes = useStyles();
+    function getDateFormat(date) {
+        return new Date(date);
+    }
 
-    const minYear = min.getFullYear();
-    const maxYear = max.getFullYear();
-    const minMonth = min.getMonth();
-    const maxMonth = max.getMonth();
+    //формат к дате
+    const minDate = getDateFormat(min);
+    const maxDate = getDateFormat(max);
+    const currentMinDate = getDateFormat(currentMin);
+    const currentMaxDate = getDateFormat(currentMax);
+
+    const minYear = minDate.getFullYear();
+    const maxYear = maxDate.getFullYear();
+    const minMonth = minDate.getMonth();
+    const maxMonth = maxDate.getMonth();
     const countMarkes = (maxYear - minYear) * 12 - minMonth + (maxMonth + 1); //число маркеров между минимаьной и максимальной датой
     const numMaxMonth = countMarkes + minMonth - 1;
 
@@ -243,20 +239,17 @@ export default function RangeSlider(props) {
     }
 
     const [marks, setMarks] = useState(getMarks());
-    const [onlyYears, setOnlyYears] = useState(false);
-    useEffect(() => {
-        if (maxYear - minYear > 2) {
-            onChangeType(TYPE_YEAR);
-            setOnlyYears(true);
-        }
-    }, [minYear, maxYear]);
+
+    if (countMarkes > 30) {
+        onChangeType(TYPE_YEAR);
+    }
 
     const [value, setValue] = useState([
-        getNumberFromDate(currentMin),
-        getNumberFromDate(currentMax),
+        getNumberFromDate(currentMinDate),
+        getNumberFromDate(currentMaxDate),
     ]);
 
-    const handleChange = (event, newValue) => {
+    const handleChangeCommitted = (event, newValue) => {
         setValue(newValue);
         const valueDate = [
             getDateFromNumber(newValue[0]),
@@ -265,36 +258,40 @@ export default function RangeSlider(props) {
         onChange(valueDate);
     };
 
-    useEffect(() => setMarks(getMarks()), [typeSlider]);
-
-    let classesButtons = `${classes.buttons} ${
-        onlyYears ? classes.displayNone : ''
-    }`;
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
 
     return (
         <>
             <div className={classes.root}>
-                <div className={classesButtons}>
-                    <Button
-                        className={classes.button}
-                        onClick={() => onChangeType(TYPE_YEAR)}
-                    >
-                        Все года
-                    </Button>
-                    <Button
-                        className={classes.button}
-                        onClick={() => onChangeType(TYPE_MONTH)}
-                    >
-                        Месяца
-                    </Button>
-                </div>
+                {!(countMarkes > 30) ? (
+                    <div className={classes.buttons}>
+                        <Button
+                            className={classes.button}
+                            onClick={() => onChangeType(TYPE_YEAR)}
+                        >
+                            Все года
+                        </Button>
+                        <Button
+                            className={classes.button}
+                            onClick={() => onChangeType(TYPE_MONTH)}
+                        >
+                            Месяца
+                        </Button>
+                    </div>
+                ) : (
+                    <></>
+                )}
+
                 <div className={classes.slider}>
                     <PrettoSlider
                         value={value}
                         onChange={handleChange}
+                        onChangeCommitted={handleChangeCommitted}
                         valueLabelDisplay="on"
+                        aria-labelledby="discrete-slider-always"
                         ValueLabelComponent={Tooltip}
-                        aria-labelledby="custom thumb label"
                         valueLabelFormat={valuetext}
                         min={minMonth}
                         step={1}

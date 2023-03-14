@@ -39,6 +39,7 @@ return (
         currentMin={new Date(2014, 6, 15)}
         currentMax={new Date(2015, 7, 25)}
         typeSlider='month'
+        onChangeType={(typeSlider) => console.log(typeSlider)}
         onChange={(dates) => console.log(dates)}
     />
 </div>
@@ -47,14 +48,15 @@ return (
 export default App;
 ```
 
-| Props      |   Type   |                 Description                  |
-| ---------- | :------: | :------------------------------------------: |
-| min        |   Date   |    Минимальная дата, доступная для выбора    |
-| max        |   Date   |    Минимальная дата, доступная для выбора    |
-| currentMin |   Date   |                Начальная дата                |
-| currentMax |   Date   |                Конечная дата                 |
-| typeSlider |  string  | Определяет, какую часть даты можно изменить  |
-| onChange   | function | Callback, вызываемый при изменении диапазона |
+| Props        |         Type         |                   Description                    |
+| ------------ | :------------------: | :----------------------------------------------: |
+| min          | Date, string, number |      Минимальная дата, доступная для выбора      |
+| max          | Date, string, number |      Минимальная дата, доступная для выбора      |
+| currentMin   | Date, string, number |                  Начальная дата                  |
+| currentMax   | Date, string, number |                  Конечная дата                   |
+| typeSlider   |        string        |   Определяет, какую часть даты можно изменить    |
+| onChange     |       function       |   Callback, вызываемый при изменении диапазона   |
+| onChangeType |       function       | Callback, вызываемый при изменении типа слайдера |
 
 ### Зависимости
 
